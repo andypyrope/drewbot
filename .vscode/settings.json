@@ -1,0 +1,22 @@
+{
+   "files.insertFinalNewline": true,
+   //  "typescript.tsdk": "/node_modules/typescript/lib",
+   // Columns at which to show vertical rulers
+   "editor.rulers": [
+      100
+   ],
+   // Controls auto save of dirty files. Accepted values:  "off", "afterDelay", "onFocusChange" (editor loses focus), "onWindowChange" (window loses focus). If set to "afterDelay", you can configure the delay in "files.autoSaveDelay".
+   "files.autoSave": "afterDelay",
+   // Controls the delay in ms after which a dirty file is saved automatically. Only applies when "files.autoSave" is set to "afterDelay"
+   "files.autoSaveDelay": 100,
+   // The path to the rules configuration file
+   "tslint.configFile": "tslint.json",
+   // The number of spaces a tab is equal to. This setting is overriden based on the file contents when `editor.detectIndentation` is on.
+   "editor.tabSize": 3,
+   // When opening a file, `editor.tabSize` and `editor.insertSpaces` will be detected based on the file contents.
+   "editor.detectIndentation": false,
+   "typescript.check.workspaceVersion": true,
+   "typescript.tsdk": "./node_modules/typescript/lib",
+   "editor.insertSpaces": true,
+   "vsicons.presets.angular": false
+}
