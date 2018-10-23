@@ -1,0 +1,64 @@
+import * as Discord from "discord.io";
+import * as logger from "winston";
+import { CommandHandler } from "../command-handler";
+import { MessageCreateEvent } from "../../events/event-types/message-create.event";
+import { TimeParser } from "../../util/time-parser";
+
+export class SleepCommand implements CommandHandler {
+   getCommands(): string[] {
+      return ["sleep"];
+   }
+
+   getInfo(): string {
+      return "Puts the bot to sleep for some amount of time";
+   }
+
+   execute(bot: Discord.Client, args: string[], channelID: string, event: MessageCreateEvent): void {
+      if (event.author.id !== "258312787422347264") {
+         bot.sendMessage({
+            to: channelID,
+            message: "Not until you've read me a bedtime story, hmph (￣^￣)",
+         });
+         return;
+      }
+
+      if (!args[0]) {
+         logger.error("The 'sleep' command requires a parameter!");
+         return;
+      }
+      const delay: number = new TimeParser(args[0]).getAsMs();
+      if (isNaN(delay) || delay < 0) {
+         return;
+      }
+      bot.disconnect();
+      const subDelay: number = Math.max(delay / 30, 200);
+      const beginningTime: number = new Date().getTime();
+      const endTime: number = beginningTime + delay;
+      const intervalId: NodeJS.Timeout = setInterval((): void => {
+         const currentTime: number = new Date().getTime();
+         const percentage: number = Math.round((currentTime - beginningTime) * 100.0 / delay);
+         let percentageString: string = "";
+         let percentageLeft: number = percentage;
+         for (let i: number = 0; i < 10; i++) {
+            if (percentageLeft >= 8) {
+               percentageString += "■";
+            } else if (percentageLeft >= 3) {
+               percentageString += "▣";
+            } else {
+               percentageString += "□";
+            }
+            percentageLeft -= 10;
+         }
+         const secondsLeft: number = Math.round((endTime - currentTime) / 1000);
+         logger.info(percentageString + " -- Waking up in " + secondsLeft + " second" + (secondsLeft === 1 ? "" : "s") + " (" + percentage + "%)");
+      }, subDelay);
+      setTimeout((): void => {
+         clearInterval(intervalId);
+         if (!bot.connected) {
+            bot.connect();
+         } else {
+            logger.error("The bot is already connected but it should be disconnected!");
+         }
+      }, delay);
+   }
+}

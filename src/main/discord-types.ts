@@ -1,11 +1,3 @@
-export interface ServerMemberInfo {
-   roles: string[];
-   nick: string | null;
-   mute: boolean;
-   joined_at: string;
-   deaf: boolean;
-}
-
 export interface User {
    username: string;
    id: string;
@@ -14,67 +6,81 @@ export interface User {
    avatar: string;
 }
 
-export interface Embed {
-   type: string;
-   footer: {
-      type: string;
-   };
-   description: string;
-   color: number;
-   author: {
-      proxy_icon_url: string;
-      name: string;
-      icon_url: string;
-   };
+export interface Member {
+   user: User;
+   roles: string[];
+   nick: string | null;
+   mute: boolean;
+   joined_at: string;
+   deaf: boolean;
 }
 
-export interface Attachment {
-   width: number;
-   url: string;
-   size: number;
-   proxy_url: string;
-   id: string;
-   height: number;
-   filename: string;
+export interface DetailedUser extends User {
+   verified: boolean;
+   mfa_enabled: boolean;
+   email: string | null;
 }
 
-export interface MessageData {
+export interface Activity {
    type: number;
-   tts: boolean;
-   timestamp: string;
-   pinned: boolean;
-   nonce: any;
-   mentions: User[];
-   mention_roles: string[];
-   mention_everyone: boolean;
-   member?: ServerMemberInfo;
+   timestamps: { start: number; };
+   name: string;
    id: string;
-   embeds: Embed[];
-   edited_timestamp: string | null;
-   content: string;
-   channel_id: string;
-   author: User;
-   attachments: Attachment[];
+   created_at: number;
 }
 
-export interface WebSocketEvent {
-   /**
-    * Detailed data of the message.
-    */
-   d: MessageData;
+export interface DetailedActivity extends Activity {
+   state: string;
+   session_id: string;
+   party: {
+      size: number[];
+      id: string;
+   };
+   flags: number;
+   details: string;
+   assets: {
+      small_test: string;
+      small_image: string;
+      large_text: string;
+      large_image: string;
+   };
+   application_id: string;
+}
 
-   /**
-    * UNKNOWN (always 0)
-    */
-   op: number;
+export interface Presence {
+   status: "offline" | "online" | "idle";
+   user: {
+      id: string;
+   };
+   activities: (Activity | DetailedActivity)[];
+   game: Activity | null;
+}
 
-   /**
-    * UNKNOWN (varying small integers)
-    */
-   s: number;
+export interface Emoji {
+   roles: string[];
+   require_colons: boolean;
+   name: string;
+   managed: boolean;
+   id: string;
+   animated: boolean;
+}
 
-   /**
-    * The event type.
-    */
-   t: string;
+export interface PermissionOverwrite {
+   type: string;
+   id: string;
+   deny: number;
+   allow: number;
+}
+
+export interface Channel {
+   type: number;
+   topic: any | null;
+   rate_limit_per_user: number;
+   position: number;
+   permission_overwrites: PermissionOverwrite[];
+   parent_id: string;
+   nsfw: boolean;
+   name: string;
+   last_message_id: string | null;
+   id: string;
 }
