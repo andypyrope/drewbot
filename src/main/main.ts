@@ -1,11 +1,10 @@
 import * as Discord from "discord.io";
-import * as logger from "winston";
 import * as fs from "fs";
 import { TransformableInfo } from "logform";
+import * as logger from "winston";
+import { CommandRegistry } from "./commands/command-registry";
 import { EventHandler } from "./events/event-handler";
 import { DisconnectEvent } from "./events/event-types/disconnect.event";
-import { MessageReactionAddEvent } from "./events/event-types/message-reaction-add.event";
-import { CommandRegistry } from "./commands/command-registry";
 import { MessageCreateEvent } from "./events/event-types/message-create.event";
 
 const auth: any = JSON.parse(fs.readFileSync("auth.json", "utf8"));
@@ -57,7 +56,7 @@ eventHandler.disconnect.listen((event: DisconnectEvent): void => {
 
 const commandRegistry: CommandRegistry = new CommandRegistry(bot, "(´･ω･`)");
 eventHandler.messageCreate.listen((event: MessageCreateEvent) => {
-   commandRegistry.scanMessage(event);
+   commandRegistry.scanMessage(event, eventHandler);
 });
 
 process.on("SIGTERM", handleTermination);

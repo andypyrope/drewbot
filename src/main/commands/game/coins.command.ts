@@ -1,6 +1,5 @@
 import { CommandHandler } from "../command-handler";
-import * as Discord from "discord.io";
-import { MessageCreateEvent } from "../../events/event-types/message-create.event";
+import { CommandParams } from "../command-params";
 
 export class CoinsCommand implements CommandHandler {
    getCommands(): string[] {
@@ -8,12 +7,12 @@ export class CoinsCommand implements CommandHandler {
    }
 
    getInfo(): string {
-      return "Only replies with an emoji";
+      return "Shows the current number of coins you have";
    }
 
-   execute(bot: Discord.Client, args: string[], channelID: string, event: MessageCreateEvent): void {
-      bot.sendMessage({
-         to: channelID,
+   execute(params: CommandParams): void {
+      params.bot.sendMessage({
+         to: params.channelId,
          message: "(* >ω<)!",
       });
    }

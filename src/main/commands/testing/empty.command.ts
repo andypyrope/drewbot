@@ -1,5 +1,5 @@
 import { CommandHandler } from "../command-handler";
-import * as Discord from "discord.io";
+import { CommandParams } from "../command-params";
 
 export class EmptyCommand implements CommandHandler {
    getCommands(): string[] {
@@ -10,9 +10,9 @@ export class EmptyCommand implements CommandHandler {
       return "Only replies with an emoji";
    }
 
-   execute(bot: Discord.Client, args: string[], channelId: string): void {
-      bot.sendMessage({
-         to: channelId,
+   execute(params: CommandParams): void {
+      params.bot.sendMessage({
+         to: params.channelId,
          message: "(* >ω<)!",
       });
    }

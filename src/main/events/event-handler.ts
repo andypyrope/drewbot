@@ -1,12 +1,12 @@
 import * as Discord from "discord.io";
-import { MessageCreateEvent } from "./event-types/message-create.event";
-import { WebSocketEvent } from "./web-socket-event";
-import { DisconnectEvent } from "./event-types/disconnect.event";
+import * as fs from "fs";
 import * as logger from "winston";
+import { DisconnectEvent } from "./event-types/disconnect.event";
+import { GuildCreateEvent } from "./event-types/guild-create.event";
+import { MessageCreateEvent } from "./event-types/message-create.event";
 import { MessageReactionAddEvent } from "./event-types/message-reaction-add.event";
 import { PresenceUpdateEvent } from "./event-types/presence-update.event";
-import { GuildCreateEvent } from "./event-types/guild-create.event";
-import * as fs from "fs";
+import { WebSocketEvent } from "./web-socket-event";
 
 type Callback<EventType> = (event: EventType) => void;
 
@@ -25,11 +25,11 @@ export class EventHandler {
    public readonly messageReactionAdd: CallbackCollection<MessageReactionAddEvent> =
       new CallbackCollection(this.eventToCollection, "MESSAGE_REACTION_ADD");
 
-   // public readonly guildCreate: CallbackCollection<GuildCreateEvent> =
-   //    new CallbackCollection(this.eventToCollection, "GUILD_CREATE");
+   public readonly guildCreate: CallbackCollection<GuildCreateEvent> =
+      new CallbackCollection(this.eventToCollection, "GUILD_CREATE");
 
-   // public readonly presenceUpdate: CallbackCollection<PresenceUpdateEvent> =
-   //    new CallbackCollection(this.eventToCollection, "PRESENCE_UPDATE");
+   public readonly presenceUpdate: CallbackCollection<PresenceUpdateEvent> =
+      new CallbackCollection(this.eventToCollection, "PRESENCE_UPDATE");
 
    private readonly callbackCollections: { [event: string]: CallbackCollection<any> } = {};
 

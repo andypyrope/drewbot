@@ -1,8 +1,7 @@
-import * as Discord from "discord.io";
-import { CommandHandler } from "../command-handler";
-import { MessageCreateEvent } from "../../events/event-types/message-create.event";
-import { TimeParser } from "../../util/time-parser";
 import * as logger from "winston";
+import { TimeParser } from "../../util/time-parser";
+import { CommandHandler } from "../command-handler";
+import { CommandParams } from "../command-params";
 
 export class DieCommand implements CommandHandler {
    getCommands(): string[] {
@@ -13,10 +12,10 @@ export class DieCommand implements CommandHandler {
       return "Shuts the bot down properly";
    }
 
-   execute(bot: Discord.Client, args: string[], channelID: string, event: MessageCreateEvent): void {
-      if (event.author.id !== "258312787422347264") {
-         bot.sendMessage({
-            to: channelID,
+   execute(params: CommandParams): void {
+      if (params.authorId !== "258312787422347264") {
+         params.bot.sendMessage({
+            to: params.channelId,
             message: "How dare you... :shiba-heartbroken:",
          });
          return;
@@ -24,16 +23,16 @@ export class DieCommand implements CommandHandler {
 
       logger.info("Disconnecting...");
 
-      if (args[0]) {
-         const delay: number = new TimeParser(args[0]).getAsMs();
+      if (params.parts[1]) {
+         const delay: number = new TimeParser(params.parts[1]).getAsMs();
          if (isNaN(delay) || delay < 0) {
             return;
          }
          setTimeout((): void => {
-            bot.disconnect();
+            params.bot.disconnect();
          }, delay);
       } else {
-         bot.disconnect();
+         params.bot.disconnect();
       }
    }
 }

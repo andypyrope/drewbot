@@ -1,5 +1,5 @@
-import { Role, Channel } from "discord.io";
-import { Presence, Emoji, Member } from "../../discord-types";
+import { Channel, Role } from "discord.io";
+import { Emoji, Member, Presence } from "../../discord-types";
 
 export interface GuildCreateEvent {
    void_states: any[];

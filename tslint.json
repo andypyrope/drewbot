@@ -70,6 +70,7 @@
          "property-declaration",
          "variable-declaration",
          "member-variable-declaration"
-      ]
+      ],
+      "ordered-imports": true
    }
 }

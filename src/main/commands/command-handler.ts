@@ -1,10 +1,9 @@
-import * as Discord from "discord.io";
-import { MessageCreateEvent } from "../events/event-types/message-create.event";
+import { CommandParams } from "./command-params";
 
 export interface CommandHandler {
    getInfo(): string;
 
    getCommands(): string[];
 
-   execute(bot: Discord.Client, args: string[], channelId: string, event: MessageCreateEvent): void;
+   execute(params: CommandParams): void;
 }
