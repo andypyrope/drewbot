@@ -1,0 +1,11 @@
+install:
+  - npm install
+  - npm uninstall -g typescript # Rely only on the locally installed typescript
+
+language: node_js
+node_js:
+  - "8"
+  - "9"
+
+script:
+  - npm run lint
