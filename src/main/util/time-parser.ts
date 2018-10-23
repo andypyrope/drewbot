@@ -3,7 +3,7 @@ import * as logger from "winston";
 export class TimeParser {
    private readonly asMs: number;
 
-   constructor(raw: string, shouldBePositive: boolean = true) {
+   constructor(raw: string) {
       this.asMs = NaN;
 
       if (raw.endsWith("s") && !isNaN(parseFloat(raw.replace("s", "")))) {

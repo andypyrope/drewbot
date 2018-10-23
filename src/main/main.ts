@@ -34,7 +34,7 @@ const bot: Discord.Client = new Discord.Client({
    autorun: true
 });
 
-const eventHandler: EventHandler = new EventHandler(bot, "(´･ω･`)");
+const eventHandler: EventHandler = new EventHandler(bot);
 const channelToServer: { [channelId: string]: Discord.Server } = {};
 
 eventHandler.ready.listen((): void => {

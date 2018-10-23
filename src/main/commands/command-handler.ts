@@ -1,9 +1,9 @@
 import { CommandParams } from "./command-params";
 
 export interface CommandHandler {
-   getInfo(): string;
+   getAliases(): string[];
 
-   getCommands(): string[];
+   getInfo(): string;
 
    execute(params: CommandParams): void;
 }

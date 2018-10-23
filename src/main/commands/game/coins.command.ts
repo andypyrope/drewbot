@@ -2,7 +2,7 @@ import { CommandHandler } from "../command-handler";
 import { CommandParams } from "../command-params";
 
 export class CoinsCommand implements CommandHandler {
-   getCommands(): string[] {
+   getAliases(): string[] {
       return ["coins"];
    }
 

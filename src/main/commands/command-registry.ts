@@ -20,7 +20,7 @@ export class CommandRegistry {
       ];
 
       for (const handler of handlerList) {
-         for (const command of handler.getCommands()) {
+         for (const command of handler.getAliases()) {
             this.handleCommand(command, handler);
          }
       }

@@ -4,7 +4,7 @@ import { CommandHandler } from "../command-handler";
 import { CommandParams } from "../command-params";
 
 export class SleepCommand implements CommandHandler {
-   getCommands(): string[] {
+   getAliases(): string[] {
       return ["sleep"];
    }
 

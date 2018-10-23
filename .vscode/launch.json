@@ -7,11 +7,22 @@
       {
          "type": "node",
          "request": "launch",
-         "name": "Launch server",
+         "name": "Launch bot",
          "program": "${workspaceFolder}/dist/main/main.js",
          "outputCapture": "std",
          "sourceMaps": true,
          "cwd": "${workspaceFolder}",
+      },
+      {
+         "type": "node",
+         "request": "launch",
+         "name": "Run tests",
+         "program": "${workspaceRoot}/node_modules/jasmine/bin/jasmine.js",
+         "outputCapture": "std",
+         "sourceMaps": true,
+         "args": [
+            "--config=./jasmine.json"
+         ],
       },
    ]
 }

@@ -31,9 +31,7 @@ export class EventHandler {
    public readonly presenceUpdate: CallbackCollection<PresenceUpdateEvent> =
       new CallbackCollection(this.eventToCollection, "PRESENCE_UPDATE");
 
-   private readonly callbackCollections: { [event: string]: CallbackCollection<any> } = {};
-
-   constructor(bot: Discord.Client, private readonly commandPrefix: string) {
+   constructor(bot: Discord.Client) {
       bot.on("any", (event: WebSocketEvent): void => {
          const collection: { [id: number]: Callback<any> } = this.eventToCollection[event.t];
 
