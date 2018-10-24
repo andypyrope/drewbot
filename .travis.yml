@@ -9,4 +9,6 @@ node_js:
 
 script:
   - npm run lint
+  - set -e
+  - npm run build
   - npm run test-only
