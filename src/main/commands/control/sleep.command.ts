@@ -21,14 +21,16 @@ export class SleepCommand implements CommandHandler {
          return;
       }
 
-      if (!params.parts[0]) {
+      if (!params.parts[1]) {
          logger.error("The 'sleep' command requires a parameter!");
          return;
       }
+
       const delay: number = new TimeParser(params.parts[1]).getAsMs();
       if (isNaN(delay) || delay < 0) {
          return;
       }
+
       params.bot.disconnect();
       const subDelay: number = Math.max(delay / 30, 200);
       const beginningTime: number = new Date().getTime();

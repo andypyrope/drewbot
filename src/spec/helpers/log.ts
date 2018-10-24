@@ -1,10 +1,13 @@
 import { TransformableInfo } from "logform";
 import * as logger from "winston";
 
-const opts: any = { colorize: true };
+const opts: any = {
+   colorize: true,
+   silent: true,
+};
 
 logger.configure({
-   level: "warn",
+   level: "silly",
    transports: [
       new logger.transports.Console(opts)
    ],

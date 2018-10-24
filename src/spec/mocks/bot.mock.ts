@@ -7,6 +7,7 @@ export class BotMock {
       this.mocked = {
          sendMessage: jasmine.createSpy("bot#sendMessage"),
          disconnect: jasmine.createSpy("bot#disconnect"),
+         connect: jasmine.createSpy("bot#connect"),
       };
    }
 

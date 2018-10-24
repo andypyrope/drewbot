@@ -1,4 +1,3 @@
-import { disconnect } from "cluster";
 import { CommandParams } from "../../../main/commands/command-params";
 import { DieCommand } from "../../../main/commands/control/die.command";
 import { MessageCreateEvent } from "../../../main/events/event-types/message-create.event";
