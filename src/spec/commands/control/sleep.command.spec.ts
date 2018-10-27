@@ -44,12 +44,15 @@ describe("SleepCommand", () => {
          });
          afterEach(function (this: ThisTest): void {
             expect(this.params.database.isSuperuser).toHaveBeenCalledWith(this.params.authorId);
+            expect(this.params.bot.sendMessage).toHaveBeenCalledWith({
+               to: this.params.channelId,
+               message: "<:shiba_ok:497869225591963655> Let's sleep!",
+            });
          });
 
          describe("WHEN there is no parameter", () => {
             it("THEN it should not do anything", async function (this: ThisTest): Promise<void> {
                await new SleepCommand().execute(this.params);
-               expect(this.params.bot.sendMessage).not.toHaveBeenCalled();
                expect(this.params.bot.disconnect).not.toHaveBeenCalled();
             });
          });
@@ -58,7 +61,6 @@ describe("SleepCommand", () => {
             it("THEN it should not do anything", async function (this: ThisTest): Promise<void> {
                this.params.parts.push("s13ash");
                await new SleepCommand().execute(this.params);
-               expect(this.params.bot.sendMessage).not.toHaveBeenCalled();
                expect(this.params.bot.disconnect).not.toHaveBeenCalled();
             });
          });
@@ -79,7 +81,6 @@ describe("SleepCommand", () => {
                   jasmine.clock().tick(9000);
 
                   jasmine.clock().tick(1001);
-                  expect(this.params.bot.sendMessage).not.toHaveBeenCalled();
                   expect(this.params.bot.connect).not.toHaveBeenCalled();
                });
             });
@@ -95,7 +96,6 @@ describe("SleepCommand", () => {
                   jasmine.clock().tick(100000);
 
                   jasmine.clock().tick(21000);
-                  expect(this.params.bot.sendMessage).not.toHaveBeenCalled();
                   expect(this.params.bot.connect).toHaveBeenCalled();
                });
             });

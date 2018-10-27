@@ -20,6 +20,11 @@ export class SleepCommand implements CommandHandler {
             message: "Not until you've read me a bedtime story, hmph (￣^￣)",
          });
          return;
+      } else {
+         params.bot.sendMessage({
+            to: params.channelId,
+            message: "<:shiba_ok:497869225591963655> Let's sleep!",
+         });
       }
 
       if (!params.parts[1]) {

@@ -44,12 +44,15 @@ describe("DieCommand", () => {
          });
          afterEach(function (this: ThisTest): void {
             expect(this.params.database.isSuperuser).toHaveBeenCalledWith(this.params.authorId);
+            expect(this.params.bot.sendMessage).toHaveBeenCalledWith({
+               to: this.params.channelId,
+               message: "<:shiba_ok:497869225591963655> Let's die!",
+            });
          });
 
          describe("WHEN there is no parameter", () => {
             it("THEN it should disconnect the bot immediately", async function (this: ThisTest): Promise<void> {
                await new DieCommand().execute(this.params);
-               expect(this.params.bot.sendMessage).not.toHaveBeenCalled();
                expect(this.params.bot.disconnect).toHaveBeenCalled();
             });
          });
@@ -58,7 +61,6 @@ describe("DieCommand", () => {
             it("THEN it should not do anything", async function (this: ThisTest): Promise<void> {
                this.params.parts.push("-3h");
                await new DieCommand().execute(this.params);
-               expect(this.params.bot.sendMessage).not.toHaveBeenCalled();
                expect(this.params.bot.disconnect).not.toHaveBeenCalled();
             });
          });
@@ -77,7 +79,6 @@ describe("DieCommand", () => {
                expect(this.params.bot.disconnect).not.toHaveBeenCalled();
 
                jasmine.clock().tick(10001);
-               expect(this.params.bot.sendMessage).not.toHaveBeenCalled();
                expect(this.params.bot.disconnect).toHaveBeenCalled();
             });
          });

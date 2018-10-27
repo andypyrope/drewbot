@@ -21,6 +21,11 @@ export class DieCommand implements CommandHandler {
             message: "How dare you... :shiba-heartbroken:",
          });
          return;
+      } else {
+         params.bot.sendMessage({
+            to: params.channelId,
+            message: "<:shiba_ok:497869225591963655> Let's die!",
+         });
       }
 
       logger.info("Disconnecting...");
