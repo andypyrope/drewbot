@@ -1,4 +1,3 @@
-import * as fs from "fs";
 import * as logger from "winston";
 import { TimeParser } from "../../util/time-parser";
 import { CommandHandler } from "../command-handler";
@@ -6,11 +5,6 @@ import { CommandParams } from "../command-params";
 
 
 export class DieCommand implements CommandHandler {
-   private readonly superusers: string[];
-
-   constructor() {
-      this.superusers = JSON.parse(fs.readFileSync("auth.json", "utf8")) || [];
-   }
 
    getAliases(): string[] {
       return ["die", "perish", "self-destruct", "kys"];

@@ -2,6 +2,7 @@ import { CommandHandler } from "../command-handler";
 import { CommandParams } from "../command-params";
 
 export class EmptyCommand implements CommandHandler {
+
    getAliases(): string[] {
       return [""];
    }
