@@ -12,10 +12,10 @@ export class GetTokenCommand implements CommandHandler {
    }
 
    async execute(params: CommandParams): Promise<void> {
-      await params.database.giveTokens(params.authorId, 1);
+      const newTokens: number = await params.database.giveTokens(params.authorId, 1);
       params.bot.sendMessage({
          to: params.channelId,
-         message: "(* >ω<) Done!",
+         message: "(* >ω<) Done! Now you have " + newTokens + " token" + (newTokens === 1 ? "" : "s") + ".",
       });
    }
 }

@@ -15,7 +15,7 @@ export class WealthCommand implements CommandHandler {
       const tokens: number = await params.database.fetchTokens(params.authorId);
       params.bot.sendMessage({
          to: params.channelId,
-         message: "<@" + params.authorId + ">, you have " + tokens + " tokens.",
+         message: "<@" + params.authorId + ">, you have " + tokens + " token" + (tokens === 1 ? "" : "s") + ".",
       });
    }
 }

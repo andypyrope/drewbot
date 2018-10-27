@@ -24,18 +24,31 @@ describe("WealthCommand", () => {
    describe("#execute", () => {
       beforeEach(function (this: ThisTest): void {
          this.params = new CommandParamsMock("wealth");
-         this.tokens = 10;
-         spyOn(this.params.database, "fetchTokens").and.returnValue(Promise.resolve(this.tokens));
+      });
+
+      afterEach(function (this: ThisTest): void {
+         expect(this.params.database.fetchTokens).toHaveBeenCalledWith(this.params.authorId);
       });
 
       it("should fetch the number of tokens and send them", async function (this: ThisTest): Promise<void> {
-         expect(this.params.database.fetchTokens).not.toHaveBeenCalled();
+         this.tokens = 10;
+         spyOn(this.params.database, "fetchTokens").and.returnValue(Promise.resolve(this.tokens));
          await new WealthCommand().execute(this.params);
-
-         expect(this.params.database.fetchTokens).toHaveBeenCalledWith(this.params.authorId);
          expect(this.params.bot.sendMessage).toHaveBeenCalledWith({
             to: this.params.channelId,
             message: "<@" + this.params.authorId + ">, you have " + this.tokens + " tokens.",
+         });
+      });
+
+      describe("WHEN there is only one token", () => {
+         it("THEN the message should still be correct", async function (this: ThisTest): Promise<void> {
+            this.tokens = 1;
+            spyOn(this.params.database, "fetchTokens").and.returnValue(Promise.resolve(this.tokens));
+            await new WealthCommand().execute(this.params);
+            expect(this.params.bot.sendMessage).toHaveBeenCalledWith({
+               to: this.params.channelId,
+               message: "<@" + this.params.authorId + ">, you have " + this.tokens + " token.",
+            });
          });
       });
    });

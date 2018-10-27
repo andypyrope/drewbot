@@ -23,18 +23,31 @@ describe("GetTokenCommand", () => {
    describe("#execute", () => {
       beforeEach(function (this: ThisTest): void {
          this.params = new CommandParamsMock("get-token");
-         this.newTokens = 10;
-         spyOn(this.params.database, "giveTokens").and.returnValue(Promise.resolve(this.newTokens));
+      });
+
+      afterEach(function (this: ThisTest): void {
+         expect(this.params.database.giveTokens).toHaveBeenCalledWith(this.params.authorId, 1);
       });
 
       it("should fetch the number of tokens and send them", async function (this: ThisTest): Promise<void> {
-         expect(this.params.database.giveTokens).not.toHaveBeenCalled();
+         this.newTokens = 10;
+         spyOn(this.params.database, "giveTokens").and.returnValue(Promise.resolve(this.newTokens));
          await new GetTokenCommand().execute(this.params);
-
-         expect(this.params.database.giveTokens).toHaveBeenCalledWith(this.params.authorId, 1);
          expect(this.params.bot.sendMessage).toHaveBeenCalledWith({
             to: this.params.channelId,
-            message: "(* >ω<) Done!",
+            message: "(* >ω<) Done! Now you have " + this.newTokens + " tokens.",
+         });
+      });
+
+      describe("WHEN there is only one token", () => {
+         it("THEN the message should still be correct", async function (this: ThisTest): Promise<void> {
+            this.newTokens = 1;
+            spyOn(this.params.database, "giveTokens").and.returnValue(Promise.resolve(this.newTokens));
+            await new GetTokenCommand().execute(this.params);
+            expect(this.params.bot.sendMessage).toHaveBeenCalledWith({
+               to: this.params.channelId,
+               message: "(* >ω<) Done! Now you have " + this.newTokens + " token.",
+            });
          });
       });
    });
