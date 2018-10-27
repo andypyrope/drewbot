@@ -1,6 +1,13 @@
+services:
+  - postgresql
+
 install:
   - npm install
   - npm uninstall -g typescript # Rely only on the locally installed typescript
+
+before_script:
+  - psql -c "ALTER USER postgres WITH PASSWORD 'mysecretpassword';" -U postgres
+  - psql -c "CREATE DATABASE 'drewbot-test'" -U postgres
 
 language: node_js
 node_js:
