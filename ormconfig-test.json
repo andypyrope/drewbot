@@ -1,0 +1,27 @@
+[
+   {
+      "name": "test",
+      "type": "postgres",
+      "host": "localhost",
+      "port": 5432,
+      "username": "postgres",
+      "password": "mysecretpassword",
+      "database": "drewbot-test",
+      "synchronize": true,
+      "logging": false,
+      "entities": [
+         "dist/main/db/entities/**/*.js"
+      ],
+      "migrations": [
+         "dist/main/db/migrations/**/*.js"
+      ],
+      "subscribers": [
+         "dist/main/db/subscribers/**/*.js"
+      ],
+      "cli": {
+         "entitiesDir": "dist/main/db/entities",
+         "migrationsDir": "dist/main/db/migrations",
+         "subscribersDir": "dist/main/db/subscribers"
+      }
+   }
+]
