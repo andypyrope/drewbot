@@ -8,7 +8,7 @@ import { DieCommand } from "./control/die.command";
 import { SleepCommand } from "./control/sleep.command";
 import { GetTokenCommand } from "./game/get-token.command";
 import { WealthCommand } from "./game/wealth.command";
-import { EmptyCommand } from "./testing/empty.command";
+import { HelpCommand } from "./general/help.command";
 
 export class CommandRegistry {
    private readonly commandHandlers: { [cmd: string]: CommandHandler } = {};
@@ -23,9 +23,9 @@ export class CommandRegistry {
          // game
          new GetTokenCommand(),
          new WealthCommand(),
-         // testing
-         new EmptyCommand(),
       ];
+      // general
+      handlerList.push(new HelpCommand(handlerList));
 
       for (const handler of handlerList) {
          for (const command of handler.getAliases()) {
