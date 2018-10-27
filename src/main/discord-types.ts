@@ -1,4 +1,4 @@
-export interface User {
+export interface DiscordUser {
    username: string;
    id: string;
    discriminator: string;
@@ -7,7 +7,7 @@ export interface User {
 }
 
 export interface Member {
-   user: User;
+   user: DiscordUser;
    roles: string[];
    nick: string | null;
    mute: boolean;
@@ -15,7 +15,7 @@ export interface Member {
    deaf: boolean;
 }
 
-export interface DetailedUser extends User {
+export interface DetailedUser extends DiscordUser {
    verified: boolean;
    mfa_enabled: boolean;
    email: string | null;

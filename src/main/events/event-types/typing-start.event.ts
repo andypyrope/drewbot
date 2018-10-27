@@ -1,10 +1,10 @@
-import { User } from "../../discord-types";
+import { DiscordUser } from "../../discord-types";
 
 export interface TypingStartEvent {
    user_id: string;
    timestamp: number;
    member: {
-      user: User;
+      user: DiscordUser;
       roles: string[];
       nick: string | null;
       mute: boolean;

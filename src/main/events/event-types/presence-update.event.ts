@@ -1,4 +1,4 @@
-import { Activity, DetailedActivity, Presence, User } from "../../discord-types";
+import { Activity, DetailedActivity, DiscordUser, Presence } from "../../discord-types";
 
 export interface PresenceUpdateEvent extends Presence {
    guild_id: string;

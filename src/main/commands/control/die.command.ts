@@ -1,9 +1,17 @@
+import * as fs from "fs";
 import * as logger from "winston";
 import { TimeParser } from "../../util/time-parser";
 import { CommandHandler } from "../command-handler";
 import { CommandParams } from "../command-params";
 
+
 export class DieCommand implements CommandHandler {
+   private readonly superusers: string[];
+
+   constructor() {
+      this.superusers = JSON.parse(fs.readFileSync("auth.json", "utf8")) || [];
+   }
+
    getAliases(): string[] {
       return ["die", "perish", "self-destruct", "kys"];
    }
@@ -12,8 +20,8 @@ export class DieCommand implements CommandHandler {
       return "Shuts the bot down properly";
    }
 
-   execute(params: CommandParams): void {
-      if (params.authorId !== "258312787422347264") {
+   async execute(params: CommandParams): Promise<void> {
+      if (!(await params.database.isSuperuser(params.authorId))) {
          params.bot.sendMessage({
             to: params.channelId,
             message: "How dare you... :shiba-heartbroken:",

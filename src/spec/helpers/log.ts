@@ -1,4 +1,5 @@
 import { TransformableInfo } from "logform";
+import "reflect-metadata";
 import * as logger from "winston";
 
 const opts: any = {

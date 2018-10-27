@@ -1,8 +1,6 @@
 import { CommandParams } from "../../../main/commands/command-params";
 import { EmptyCommand } from "../../../main/commands/testing/empty.command";
-import { MessageCreateEvent } from "../../../main/events/event-types/message-create.event";
-import { BotMock } from "../../mocks/bot.mock";
-import { EventHandlerMock } from "../../mocks/event-handler.mock";
+import { CommandParamsMock } from "../../mocks/command-params.mock";
 
 interface ThisTest {
    params: CommandParams;
@@ -23,15 +21,7 @@ describe("EmptyCommand", () => {
 
    describe("#execute", () => {
       beforeEach(function (this: ThisTest): void {
-         this.params = {
-            bot: new BotMock().getMocked(),
-            command: "",
-            parts: [],
-            event: <MessageCreateEvent>{},
-            channelId: "123",
-            authorId: "235",
-            eventHandler: new EventHandlerMock().getMocked(),
-         };
+         this.params = new CommandParamsMock("");
       });
 
       it("should only send a cute emoticon (for now)", function (this: ThisTest): void {

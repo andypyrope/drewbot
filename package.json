@@ -11,7 +11,7 @@
       "lint-fix": "./node_modules/.bin/tslint -p . --fix",
       "test-only": "./node_modules/.bin/jasmine --config=./jasmine.json",
       "test": "npm run lint-fix && npm run test-only",
-      "start": "node ./dist/main/main.js"
+      "start": "node ./dist/main/"
    },
    "devDependencies": {
       "@types/jasmine": "^2.8.9",
@@ -22,6 +22,9 @@
    },
    "dependencies": {
       "discord.io": "github:woor/discord.io#gateway_v6",
+      "pg": "^7.5.0",
+      "reflect-metadata": "^0.1.12",
+      "typeorm": "^0.2.8",
       "winston": "^3.1.0"
    }
 }

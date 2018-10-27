@@ -1,22 +1,30 @@
 import * as Discord from "discord.io";
 import * as logger from "winston";
+import { TypeormDatabase } from "../db/typeorm-database";
 import { EventHandler } from "../events/event-handler";
 import { MessageCreateEvent } from "../events/event-types/message-create.event";
 import { CommandHandler } from "./command-handler";
 import { DieCommand } from "./control/die.command";
 import { SleepCommand } from "./control/sleep.command";
-import { CoinsCommand } from "./game/coins.command";
+import { GetTokenCommand } from "./game/get-token.command";
+import { WealthCommand } from "./game/wealth.command";
 import { EmptyCommand } from "./testing/empty.command";
 
 export class CommandRegistry {
    private readonly commandHandlers: { [cmd: string]: CommandHandler } = {};
 
-   constructor(private readonly bot: Discord.Client, private readonly commandPrefix: string) {
+   constructor(private readonly bot: Discord.Client, private readonly database: TypeormDatabase,
+      private readonly commandPrefix: string) {
+
       const handlerList: CommandHandler[] = [
+         // control
          new DieCommand(),
          new SleepCommand(),
+         // game
+         new GetTokenCommand(),
+         new WealthCommand(),
+         // testing
          new EmptyCommand(),
-         new CoinsCommand(),
       ];
 
       for (const handler of handlerList) {
@@ -28,8 +36,8 @@ export class CommandRegistry {
 
    scanMessage(event: MessageCreateEvent, eventHandler: EventHandler): void {
 
-      logger.debug("Message '" + event.content + "' has been sent by user " + event.author.username + "#" + event.author.discriminator +
-         " at channel with ID '" + event.channel_id + "'");
+      logger.debug("Message '" + event.content + "' has been sent by user " + event.author.username +
+         "#" + event.author.discriminator + " at channel with ID '" + event.channel_id + "'");
 
       const channelId: string = event.channel_id;
 
@@ -50,6 +58,7 @@ export class CommandRegistry {
 
       this.commandHandlers[command].execute({
          bot: this.bot,
+         database: this.database,
          authorId: event.author.id,
          command: command,
          channelId: channelId,

@@ -1,4 +1,4 @@
-import { User } from "../../discord-types";
+import { DiscordUser } from "../../discord-types";
 
 export interface ServerMemberInfo {
    roles: string[];
@@ -38,7 +38,7 @@ export interface MessageCreateEvent {
    timestamp: string;
    pinned: boolean;
    nonce: any;
-   mentions: User[];
+   mentions: DiscordUser[];
    mention_roles: string[];
    mention_everyone: boolean;
    member?: ServerMemberInfo;
@@ -47,6 +47,6 @@ export interface MessageCreateEvent {
    edited_timestamp: string | null;
    content: string;
    channel_id: string;
-   author: User;
+   author: DiscordUser;
    attachments: Attachment[];
 }

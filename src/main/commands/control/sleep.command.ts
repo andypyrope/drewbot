@@ -12,8 +12,8 @@ export class SleepCommand implements CommandHandler {
       return "Puts the bot to sleep for some amount of time";
    }
 
-   execute(params: CommandParams): void {
-      if (params.authorId !== "258312787422347264") {
+   async execute(params: CommandParams): Promise<void> {
+      if (!(await params.database.isSuperuser(params.authorId))) {
          params.bot.sendMessage({
             to: params.channelId,
             message: "Not until you've read me a bedtime story, hmph (￣^￣)",
