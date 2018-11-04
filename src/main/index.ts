@@ -3,11 +3,15 @@ import * as fs from "fs";
 import { TransformableInfo } from "logform";
 import "reflect-metadata";
 import * as logger from "winston";
+import { Bot } from "./bot/bot";
+import { DiscordBot } from "./bot/discord-bot";
 import { CommandRegistry } from "./commands/command-registry";
 import { TypeormDatabase } from "./db/typeorm-database";
 import { EventHandler } from "./events/event-handler";
 import { DisconnectEvent } from "./events/event-types/disconnect.event";
 import { MessageCreateEvent } from "./events/event-types/message-create.event";
+import { StandardEventHandler } from "./events/standard-event-handler";
+import { StandardTimeService } from "./util/standard-time-service";
 
 const auth: any = JSON.parse(fs.readFileSync("auth.json", "utf8"));
 
@@ -32,52 +36,45 @@ async function main(): Promise<void> {
 
    // Initialize Discord Bot
    logger.info("Initializing the bot...");
-   const bot: Discord.Client = new Discord.Client({
+   const rawBot: Discord.Client = new Discord.Client({
       token: auth.token,
       autorun: true
    });
 
-   const eventHandler: EventHandler = new EventHandler(bot);
+   const eventHandler: EventHandler = new StandardEventHandler(rawBot);
+   const bot: Bot = new DiscordBot(rawBot, eventHandler);
+
    const channelToServer: { [channelId: string]: Discord.Server } = {};
 
    eventHandler.ready.listen((): void => {
       logger.info("Connected");
       logger.info("Logged in as: ");
-      logger.info(bot.username + " - (" + bot.id + ")");
-      for (const serverId in bot.servers) {
-         for (const channelId in bot.servers[serverId].channels) {
-            channelToServer[channelId] = bot.servers[serverId];
+      logger.info(rawBot.username + " - (" + rawBot.id + ")");
+      for (const serverId in rawBot.servers) {
+         for (const channelId in rawBot.servers[serverId].channels) {
+            channelToServer[channelId] = rawBot.servers[serverId];
          }
-         logger.info(`Server '${bot.servers[serverId].name}' with ID '${serverId}' has ${Object.keys(bot.servers[serverId].channels).length} channels`);
+         logger.info(`Server '${rawBot.servers[serverId].name}' with ID '${serverId}' has ${Object.keys(rawBot.servers[serverId].channels).length} channels`);
       }
-      logger.info(`Total channels: ${Object.keys(bot.channels).length}`);
+      logger.info(`Total channels: ${Object.keys(rawBot.channels).length}`);
    });
 
    eventHandler.disconnect.listen((event: DisconnectEvent): void => {
       logger.info("Disconnected the bot successfully (" + event.errorMessage + ", " + event.code + "). Exiting...");
    });
 
-   const commandRegistry: CommandRegistry = new CommandRegistry(bot, database, "(´･ω･`)");
-   eventHandler.messageCreate.listen((event: MessageCreateEvent) => {
-      commandRegistry.scanMessage(event, eventHandler);
-   });
+   const commandRegistry: CommandRegistry = new CommandRegistry(bot, database, eventHandler, "(´･ω･`)");
 
    process.on("SIGTERM", handleTermination);
    process.on("SIGINT", handleTermination);
 
-   function handleTermination(): void {
+   async function handleTermination(): Promise<void> {
       logger.warn("Caught interrupt signal");
-      if (bot.connected) {
-         logger.warn("The bot is connected. Attempting to disconnect...");
-         setTimeout((): void => {
-            logger.error("The bot could not disconnect in 10 seconds. Exiting...");
-            process.exit();
-         }, 10000);
-
-         bot.disconnect();
-      } else {
-         process.exit();
+      if (rawBot.connected) {
+         logger.warn("The bot is connected. Disconnecting...");
+         await bot.disconnect();
       }
+      process.exit();
    }
 }
 

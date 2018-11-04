@@ -1,4 +1,4 @@
-export interface MessageReactionAddEvent {
+export interface MessageReactionAddRemoveEvent {
    channel_id: string;
    emoji: {
       animated: boolean;

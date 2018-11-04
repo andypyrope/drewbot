@@ -1,11 +1,9 @@
-import * as Discord from "discord.io";
 import * as logger from "winston";
-import { TypeormDatabase } from "../db/typeorm-database";
+import { Bot } from "../bot/bot";
+import { Database } from "../db/database";
 import { EventHandler } from "../events/event-handler";
 import { MessageCreateEvent } from "../events/event-types/message-create.event";
 import { CommandHandler } from "./command-handler";
-import { DieCommand } from "./control/die.command";
-import { SleepCommand } from "./control/sleep.command";
 import { GetTokenCommand } from "./game/get-token.command";
 import { WealthCommand } from "./game/wealth.command";
 import { HelpCommand } from "./general/help.command";
@@ -13,13 +11,10 @@ import { HelpCommand } from "./general/help.command";
 export class CommandRegistry {
    private readonly commandHandlers: { [cmd: string]: CommandHandler } = {};
 
-   constructor(private readonly bot: Discord.Client, private readonly database: TypeormDatabase,
-      private readonly commandPrefix: string) {
+   constructor(private readonly bot: Bot, private readonly database: Database,
+      private readonly eventHandler: EventHandler, private readonly commandPrefix: string) {
 
       const handlerList: CommandHandler[] = [
-         // control
-         new DieCommand(),
-         new SleepCommand(),
          // game
          new GetTokenCommand(),
          new WealthCommand(),
@@ -32,9 +27,13 @@ export class CommandRegistry {
             this.handleCommand(command, handler);
          }
       }
+
+      eventHandler.messageCreate.listen((event: MessageCreateEvent) => {
+         this.scanMessage(event);
+      });
    }
 
-   scanMessage(event: MessageCreateEvent, eventHandler: EventHandler): void {
+   private scanMessage(event: MessageCreateEvent): void {
 
       logger.debug("Message '" + event.content + "' has been sent by user " + event.author.username +
          "#" + event.author.discriminator + " at channel with ID '" + event.channel_id + "'");
@@ -64,7 +63,7 @@ export class CommandRegistry {
          channelId: channelId,
          event: event,
          parts: parts,
-         eventHandler: eventHandler,
+         eventHandler: this.eventHandler,
       });
    }
 

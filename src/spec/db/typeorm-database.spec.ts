@@ -72,12 +72,4 @@ describe("TypeormDatabase", () => {
          });
       });
    });
-
-   describe("#isSuperuser", () => {
-      it("should return true only for users that exist in the table", async function (this: ThisTest): Promise<void> {
-         expect(await this.database.isSuperuser(this.userId)).toBe(false);
-         await this.connection.manager.save(new Superuser(this.userId));
-         expect(await this.database.isSuperuser(this.userId)).toBe(true);
-      });
-   });
 });

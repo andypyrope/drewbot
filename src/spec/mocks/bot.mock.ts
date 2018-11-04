@@ -1,17 +1,29 @@
-import * as Discord from "discord.io";
+import { Bot } from "../../main/bot/bot";
+import { ReactionEvent } from "../../main/bot/custom-event-types/reaction.event";
+import { PromptOptions, SendMessageOptions } from "../../main/bot/method-params";
+import { DisconnectEvent } from "../../main/events/event-types/disconnect.event";
+import { MessageCreateEvent } from "../../main/events/event-types/message-create.event";
+import { ReadyEvent } from "../../main/events/event-types/ready.event";
 
-export class BotMock {
-   private readonly mocked: Discord.Client;
+export class BotMock implements Bot {
 
-   constructor() {
-      this.mocked = jasmine.createSpyObj("discord.io::Discord.Client", {
-         sendMessage: jasmine.createSpy("bot#sendMessage"),
-         disconnect: jasmine.createSpy("bot#disconnect"),
-         connect: jasmine.createSpy("bot#connect"),
-      });
+   disconnect(): Promise<DisconnectEvent> {
+      throw new Error("BotMock#disconnect should be spied upon.");
    }
 
-   public getMocked(): Discord.Client {
-      return this.mocked;
+   sendMessage(options: SendMessageOptions): Promise<MessageCreateEvent> {
+      throw new Error("BotMock#sendMessage should be spied upon.");
+   }
+
+   deleteMessage(message: MessageCreateEvent): Promise<void> {
+      throw new Error("BotMock#deleteMessage should be spied upon.");
+   }
+
+   reactTo(message: MessageCreateEvent, reaction: string): Promise<void> {
+      throw new Error("BotMock#reactTo should be spied upon.");
+   }
+
+   promptWithReaction(options: PromptOptions): Promise<ReactionEvent> {
+      throw new Error("BotMock#promptWithReaction should be spied upon.");
    }
 }

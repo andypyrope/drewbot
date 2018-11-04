@@ -24,6 +24,7 @@ describe("HelpCommand", () => {
    describe("#execute", () => {
       it("should display proper help", function (this: ThisTest): void {
          this.params = new CommandParamsMock("help");
+         spyOn(this.params.bot, "sendMessage").and.returnValue(Promise.resolve());
          const allCommands: CommandHandler[] = [
             new CommandMock(["cmd1"], "Some command"),
          ];

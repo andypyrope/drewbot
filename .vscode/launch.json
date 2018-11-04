@@ -8,7 +8,7 @@
          "type": "node",
          "request": "launch",
          "name": "Launch bot",
-         "program": "${workspaceFolder}/dist/main/main.js",
+         "program": "${workspaceFolder}/dist/main/index.js",
          "outputCapture": "std",
          "sourceMaps": true,
          "cwd": "${workspaceFolder}",

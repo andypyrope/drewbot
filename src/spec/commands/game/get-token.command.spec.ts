@@ -23,6 +23,7 @@ describe("GetTokenCommand", () => {
    describe("#execute", () => {
       beforeEach(function (this: ThisTest): void {
          this.params = new CommandParamsMock("get-token");
+         spyOn(this.params.bot, "sendMessage").and.returnValue(Promise.resolve());
       });
 
       afterEach(function (this: ThisTest): void {

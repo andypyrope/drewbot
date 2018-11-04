@@ -84,3 +84,10 @@ export interface Channel {
    last_message_id: string | null;
    id: string;
 }
+
+export interface CallbackError {
+   message?: string;
+   statusCode?: string;
+   statusMessage?: string;
+   response?: string;
+}
