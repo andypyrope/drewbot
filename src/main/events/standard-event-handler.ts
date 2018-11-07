@@ -6,6 +6,8 @@ import { EventHandler } from "./event-handler";
 import { DisconnectEvent } from "./event-types/disconnect.event";
 import { GuildCreateEvent } from "./event-types/guild-create.event";
 import { MessageCreateEvent } from "./event-types/message-create.event";
+import { MessageDeleteBulkEvent } from "./event-types/message-delete-bulk.event";
+import { MessageDeleteEvent } from "./event-types/message-delete.event";
 import { MessageReactionAddRemoveEvent } from "./event-types/message-reaction-add-remove.event";
 import { PresenceUpdateEvent } from "./event-types/presence-update.event";
 import { ReadyEvent } from "./event-types/ready.event";
@@ -15,9 +17,16 @@ type Callback<EventType> = (event: EventType) => void;
 
 export class StandardEventHandler implements EventHandler {
    private readonly eventToCollection: { [event: string]: { [id: number]: Callback<any> } } = {};
+   private readonly reactionListeners: { [id: string]: (event: MessageReactionAddRemoveEvent) => void } = {};
 
    public readonly messageCreate: CallbackCollection<MessageCreateEvent> =
       new StandardCallbackCollection(this.eventToCollection, "MESSAGE_CREATE");
+
+   public readonly messageDelete: CallbackCollection<MessageDeleteEvent> =
+      new StandardCallbackCollection(this.eventToCollection, "MESSAGE_DELETE");
+
+   public readonly messageDeleteBulk: CallbackCollection<MessageDeleteBulkEvent> =
+      new StandardCallbackCollection(this.eventToCollection, "MESSAGE_DELETE_BULK");
 
    public readonly ready: CallbackCollection<ReadyEvent> =
       new StandardCallbackCollection(this.eventToCollection, "READY");
@@ -40,26 +49,7 @@ export class StandardEventHandler implements EventHandler {
    constructor(rawBot: Discord.Client) {
       rawBot.on("any", (event: WebSocketEvent): void => {
          const collection: { [id: number]: Callback<any> } = this.eventToCollection[event.t];
-
-         const eventFilename: string = "./data/" + event.t + ".json";
-         if (event.t && !fs.existsSync(eventFilename)) {
-            const initial: any = fs.existsSync(eventFilename) ? JSON.parse(fs.readFileSync(eventFilename, "utf8")) : {};
-
-            const current: any = event.d;
-            let hasDifference: boolean = false;
-
-            for (const prop in current) {
-               if (!initial[prop]) {
-                  hasDifference = true;
-                  initial[prop] = current[prop];
-               }
-            }
-
-            if (hasDifference) {
-               logger.info("Saving the data of collection for event of type '" + event.t + "'");
-               fs.writeFileSync(eventFilename, JSON.stringify(initial));
-            }
-         }
+         this.saveEvent(event);
 
          if (!collection) {
             if (event.t) {
@@ -71,6 +61,38 @@ export class StandardEventHandler implements EventHandler {
             collection[id](event.d);
          }
       });
+
+      this.messageReactionAdd.listen(this.onReaction.bind(this));
+      this.messageReactionRemove.listen(this.onReaction.bind(this));
+
+      this.messageDelete.listen((event: MessageDeleteEvent): void => {
+         delete this.reactionListeners[event.id];
+      });
+
+      this.messageDeleteBulk.listen((event: MessageDeleteBulkEvent): void => {
+         for (const id of event.ids) {
+            delete this.reactionListeners[id];
+         }
+      });
+   }
+
+   public listenForReactions(message: MessageCreateEvent,
+      callback: (event: MessageReactionAddRemoveEvent) => void): void {
+      this.reactionListeners[message.id] = callback;
+   }
+
+   private onReaction(event: MessageReactionAddRemoveEvent): void {
+      if (this.reactionListeners[event.message_id]) {
+         this.reactionListeners[event.message_id](event);
+      }
+   }
+
+   private saveEvent(event: WebSocketEvent): void {
+      const eventFilename: string = "./data/" + event.t + ".json";
+      if (event.t && !fs.existsSync(eventFilename)) {
+         logger.info("Saving the data of collection for event of type '" + event.t + "'");
+         fs.writeFileSync(eventFilename, JSON.stringify(event.d));
+      }
    }
 }
 

@@ -5,31 +5,25 @@ import { EventHandler } from "../events/event-handler";
 import { DisconnectEvent } from "../events/event-types/disconnect.event";
 import { MessageCreateEvent } from "../events/event-types/message-create.event";
 import { MessageReactionAddRemoveEvent } from "../events/event-types/message-reaction-add-remove.event";
+import { TimeService } from "../util/time-service";
 import { Bot } from "./bot";
-import { SendMessageOptions } from "./method-params";
+import { ReactionEvent } from "./custom-event-types/reaction.event";
+import { PromptOptions, SendMessageOptions } from "./method-params";
+import { PresetEmoji } from "./preset-emoji";
 
 export class DiscordBot implements Bot {
 
-   private readonly reactionListeners: { [id: string]: (event: MessageReactionAddRemoveEvent) => void } = {};
    private disconnectResolve?: (event: DisconnectEvent) => void;
 
    constructor(
       private readonly nativeBot: Discord.Client,
-      eventHandler: EventHandler) {
+      private readonly eventHandler: EventHandler,
+      private readonly timeService: TimeService) {
 
       logger.info("DiscordBot :: Initializing...");
-      eventHandler.messageReactionAdd.listen((event: MessageReactionAddRemoveEvent): void => {
-         if (this.reactionListeners[event.message_id]) {
-            this.reactionListeners[event.message_id](event);
-         }
-      });
-      eventHandler.messageReactionRemove.listen((event: MessageReactionAddRemoveEvent): void => {
-         if (this.reactionListeners[event.message_id]) {
-            this.reactionListeners[event.message_id](event);
-         }
-      });
 
       eventHandler.disconnect.listen((event: DisconnectEvent): void => {
+         logger.warn("DiscordBot :: The bot has been disconnected.");
          if (this.disconnectResolve) {
             this.disconnectResolve(event);
             this.disconnectResolve = undefined;
@@ -80,12 +74,12 @@ export class DiscordBot implements Bot {
       });
    }
 
-   public reactTo(message: MessageCreateEvent, reaction: string): Promise<void> {
+   public reactTo(message: MessageCreateEvent, reaction: PresetEmoji): Promise<void> {
       return new Promise((resolve: () => void, reject: (error: Error) => void): void => {
          this.nativeBot.addReaction({
             channelID: message.channel_id,
             messageID: message.id,
-            reaction: reaction,
+            reaction: reaction.toString(),
          }, (error: CallbackError | undefined): void => {
             if (error) {
                logger.error("DiscordBot :: Failed to add reaction '" + reaction + "' to message #" +
@@ -94,6 +88,64 @@ export class DiscordBot implements Bot {
             } else {
                resolve();
             }
+         });
+      });
+   }
+
+   public async promptWithReaction(options: PromptOptions): Promise<ReactionEvent> {
+      options.message = (options.message ? options.message + "\n\n" : "") + "React to answer.";
+      const message: MessageCreateEvent = await this.sendMessage(options);
+
+      try {
+         for (const choice of options.choices) {
+            await this.timeService.wait(200);
+            await this.reactTo(message, choice);
+         }
+      } catch (error) {
+         await this.deleteMessage(message);
+         throw error;
+      }
+
+      return new Promise((resolve: (result: ReactionEvent) => void, reject: (error: Error) => void): void => {
+         const timeoutId: NodeJS.Timeout | undefined = options.timeoutMs === undefined
+            ? undefined
+            : setTimeout(async (): Promise<void> => {
+               await this.deleteMessage(message);
+               reject(new Error("No response in " + options.timeoutMs + " ms"));
+            }, options.timeoutMs);
+
+         this.eventHandler.listenForReactions(message, (reaction: MessageReactionAddRemoveEvent): void => {
+            if (reaction.user_id === this.nativeBot.id
+               || (options.recipientId && reaction.user_id !== options.recipientId)) {
+               return;
+            }
+
+            const emojiFullId: string = reaction.emoji.name + ":" +
+               reaction.emoji.id;
+
+            logger.info("DiscordBot :: Reaction " + emojiFullId + " at '" + message.content + "'");
+
+            const index: number = options.choices.findIndex((emoji: PresetEmoji): boolean =>
+               emoji.hasNameAndId(reaction.emoji.name, reaction.emoji.id));
+
+            if (index === -1) {
+               return;
+            }
+
+            if (timeoutId) {
+               logger.debug(`DiscordBot :: Clearing the timeout for message '${message.id}'`);
+               clearTimeout(timeoutId);
+            }
+
+            if (options.deleteAfterwards) {
+               logger.debug(`DiscordBot :: Deleting reaction message '${message.id}'`);
+               this.deleteMessage(message);
+            }
+
+            resolve({
+               reactionIndex: index,
+               userId: reaction.user_id,
+            });
          });
       });
    }

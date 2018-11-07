@@ -1,9 +1,9 @@
 import { Bot } from "../../main/bot/bot";
 import { ReactionEvent } from "../../main/bot/custom-event-types/reaction.event";
 import { PromptOptions, SendMessageOptions } from "../../main/bot/method-params";
+import { PresetEmoji } from "../../main/bot/preset-emoji";
 import { DisconnectEvent } from "../../main/events/event-types/disconnect.event";
 import { MessageCreateEvent } from "../../main/events/event-types/message-create.event";
-import { ReadyEvent } from "../../main/events/event-types/ready.event";
 
 export class BotMock implements Bot {
 
@@ -19,7 +19,7 @@ export class BotMock implements Bot {
       throw new Error("BotMock#deleteMessage should be spied upon.");
    }
 
-   reactTo(message: MessageCreateEvent, reaction: string): Promise<void> {
+   reactTo(message: MessageCreateEvent, reaction: PresetEmoji): Promise<void> {
       throw new Error("BotMock#reactTo should be spied upon.");
    }
 

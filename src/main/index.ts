@@ -42,7 +42,7 @@ async function main(): Promise<void> {
    });
 
    const eventHandler: EventHandler = new StandardEventHandler(rawBot);
-   const bot: Bot = new DiscordBot(rawBot, eventHandler);
+   const bot: Bot = new DiscordBot(rawBot, eventHandler, new StandardTimeService());
 
    const channelToServer: { [channelId: string]: Discord.Server } = {};
 
