@@ -63,7 +63,7 @@ async function main(): Promise<void> {
       logger.info("Disconnected the bot successfully (" + event.errorMessage + ", " + event.code + "). Exiting...");
    });
 
-   const commandRegistry: CommandRegistry = new CommandRegistry(bot, database, eventHandler, "(´･ω･`)");
+   const commandRegistry: CommandRegistry = new CommandRegistry(bot, database, eventHandler, "mew");
 
    process.on("SIGTERM", handleTermination);
    process.on("SIGINT", handleTermination);
