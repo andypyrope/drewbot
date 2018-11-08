@@ -1,6 +1,5 @@
 import { Connection, createConnection } from "typeorm";
 import { Database } from "../../main/db/database";
-import { Superuser } from "../../main/db/entities/superuser";
 import { User } from "../../main/db/entities/user";
 import { TypeormDatabase } from "../../main/db/typeorm-database";
 
@@ -17,7 +16,6 @@ describe("TypeormDatabase", () => {
       this.database = new TypeormDatabase(this.connection);
 
       this.connection.manager.clear(User);
-      this.connection.manager.clear(Superuser);
    });
 
    afterEach(async function (this: ThisTest): Promise<void> {

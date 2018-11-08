@@ -1,7 +1,6 @@
 import { Connection, createConnection, EntityManager } from "typeorm";
 import * as logger from "winston";
 import { Database } from "./database";
-import { Superuser } from "./entities/superuser";
 import { User } from "./entities/user";
 
 /**
@@ -25,10 +24,6 @@ export class TypeormDatabase implements Database {
       const user: User = await this.getOrCreateUser(userId);
       user.tokens += tokens;
       return (await this.entityManager.save(user)).tokens;
-   }
-
-   public async isSuperuser(userId: string): Promise<boolean> {
-      return !!(await this.entityManager.findOne(Superuser, userId));
    }
 
    private async getOrCreateUser(id: string): Promise<User> {
