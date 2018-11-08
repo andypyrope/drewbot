@@ -13,7 +13,7 @@ export class GetTokenCommand implements CommandHandler {
 
    async execute(params: CommandParams): Promise<void> {
       const newTokens: number = await params.database.giveTokens(params.authorId, 1);
-      params.bot.sendMessage({
+      await params.bot.sendMessage({
          to: params.channelId,
          message: "(* >ω<) Done! Now you have " + newTokens + " token" + (newTokens === 1 ? "" : "s") + ".",
       });

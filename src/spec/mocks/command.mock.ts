@@ -13,7 +13,7 @@ export class CommandMock implements CommandHandler {
       return this.info;
    }
 
-   execute(params: CommandParams): void {
+   execute(params: CommandParams): Promise<void> {
       throw new Error("execute should be spied upon");
    }
 }

@@ -64,6 +64,10 @@ export class CommandRegistry {
          event: event,
          parts: parts,
          eventHandler: this.eventHandler,
+      }).then(() => {
+         logger.info(`Command ${command}, executed by user '${event.author.username}' has succeeded.`);
+      }).catch((error?: Error) => {
+         logger.error(`Command ${command}, executed by user '${event.author.username}' has failed due to : ${error ? error.message : "No error provider"}`);
       });
    }
 

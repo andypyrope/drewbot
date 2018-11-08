@@ -13,7 +13,7 @@ export class WealthCommand implements CommandHandler {
 
    async execute(params: CommandParams): Promise<void> {
       const tokens: number = await params.database.fetchTokens(params.authorId);
-      params.bot.sendMessage({
+      await params.bot.sendMessage({
          to: params.channelId,
          message: "<@" + params.authorId + ">, you have " + tokens + " token" + (tokens === 1 ? "" : "s") + ".",
       });

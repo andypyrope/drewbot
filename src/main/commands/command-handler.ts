@@ -5,5 +5,5 @@ export interface CommandHandler {
 
    getInfo(): string;
 
-   execute(params: CommandParams): void;
+   execute(params: CommandParams): Promise<void>;
 }

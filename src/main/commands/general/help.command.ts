@@ -13,8 +13,8 @@ export class HelpCommand implements CommandHandler {
       return "Shows information about all commands";
    }
 
-   execute(params: CommandParams): void {
-      params.bot.sendMessage({
+   async execute(params: CommandParams): Promise<void> {
+      await params.bot.sendMessage({
          to: params.channelId,
          message: "Commands:\n" + this.commands
             .map((command: CommandHandler) =>
